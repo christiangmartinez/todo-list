@@ -1,23 +1,7 @@
 <!--index.vtl-->
-<h1>Task list!</h1>
-
-#if ($tasks)
-<ul>
-  #foreach ($task in $tasks)
-    <li>$task.getDescription()</li>
-  #end
-</ul>
-
-#else
-  <p>No tasks!</p>
-#end
-
-<p>Add a new Task:</p>
-
-<form action="/tasks" method="post">
-  <label for="description">Task Description</label>
-  <input id="description" name="description" type="text">
-
-  <button type="submit" class="btn btn-default">Add task</button>
-</form>
+<div class="page-header">
+  <h1>Welcome to the To Do List App!!!</h1>
+</div>
+<a href="/tasks/new">Add a new task</a>
+<a href="/tasks">View all current tasks</a>
 <!--index.vtl-->
