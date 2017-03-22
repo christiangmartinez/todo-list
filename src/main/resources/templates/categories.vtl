@@ -1,0 +1,9 @@
+<!--categories.vtl-->
+<h1>All Categories</h1>
+<ul>
+  #foreach ($category in $categories)
+  <li><a href="/categories/$category.getId()">$category.getName()</li>
+  #end
+</ul>
+<a href="/categories/new">Add New Category</a>
+<!--categories.vtl-->
