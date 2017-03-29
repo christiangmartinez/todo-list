@@ -1,8 +1,22 @@
+import org.sql2o.*;
 import org.junit.*;
 import static org.junit.Assert.*;
 import java.time.LocalDateTime;
 
 public class TaskTest {
+
+  @Before
+  public void setUp() {
+  DB.sql2o = new Sql2o("jdbc:postgresql://localhost:5432/to_do_test", null, null);
+  }
+
+  @After
+  public void tearDown() {
+    try(Connection con = DB.sql2o.open()) {
+      String sql = "DELETE FROM tasks *;";
+      con.createQuery(sql).executeUpdate();
+    }
+  }
 
   @Test
   public void Task_instantiatesCorrectly_true() {
@@ -31,29 +45,48 @@ public class TaskTest {
   @Test
   public void all_returnsAllInstancesOfTask_true() {
     Task firstTask = new Task("Mow the lawn");
-    Task secondTask = new Task("Buyy groceries");
-    assertEquals(true, Task.all().contains(firstTask));
-    assertEquals(true, Task.all().contains(secondTask));
-  }
-
-  @Test
-  public void clear_emptiesAllTasksFromArrayList_0() {
-    Task myTask = new Task("Mow the lawn");
-    Task.clear();
-    assertEquals(Task.all().size(), 0);
+    firstTask.save();
+    Task secondTask = new Task("Buy groceries");
+    secondTask.save();
+    assertEquals(true, Task.all().get(0).equals(firstTask));
+    assertEquals(true, Task.all().get(1).equals(secondTask));
   }
 
   @Test
   public void getId_tasksInstantiateWithAnID_1() {
-    Task.clear();
     Task myTask = new Task("Mow the lawn");
-    assertEquals(1, myTask.getId());
+    myTask.save();
+    assertTrue(myTask.getId() > 0);
   }
 
   @Test
-  public void find_returnsTaskWithSameId_secondTask() {
+  public void equals_returnsTrueIfDescriptionsSame() {
     Task firstTask = new Task("Mow the lawn");
+    Task secondTask = new Task("Mow the lawn");
+    assertTrue(firstTask.equals(secondTask));
+  }
+
+  @Test
+  public void save_returnsTrueIfDescriptionsSame() {
+    Task myTask = new Task("Mow the lawn");
+    myTask.save();
+    assertTrue(Task.all().get(0).equals(myTask));
+  }
+
+  @Test
+  public void save_assignsIdToObject() {
+    Task myTask = new Task("Mow the lawn");
+    myTask.save();
+    Task savedTask = Task.all().get(0);
+    assertEquals(myTask.getId(),savedTask.getId());
+  }
+
+  @Test
+  public void find_returnsTaksWithSameId_secondTask() {
+    Task firstTask = new Task("Mow the lawn");
+    firstTask.save();
     Task secondTask = new Task("Buy groceries");
+    secondTask.save();
     assertEquals(Task.find(secondTask.getId()), secondTask);
   }
 
